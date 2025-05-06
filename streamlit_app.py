@@ -173,30 +173,19 @@ def optimize_layers(layers, gwt_depth):
 st.set_page_config(page_title="Soil Layer Optimizer", layout="wide")
 st.title("🧱 Soil Layer Optimizer")
 
-with st.expander("📘 Theory - Rankine Earth Pressure", expanded=True):
-    st.markdown(r"""
-    <div style="background-color: #f8f9fa; padding: 1rem; border-radius: 0.5rem;">
-    <b>Rankine's Earth Pressure Theory</b> is used to estimate the lateral earth pressure exerted by a soil mass on a retaining wall or similar structure.
+with st.expander("📘 Theory - Rankine Earth Pressure & Optimization", expanded=True):
+    st.markdown("""
+    <style> .theory-box { background-color: #f8f9fa; padding: 1rem; border-radius: 0.5rem; } </style>
+    <div class="theory-box">
+    <b>Rankine's Earth Pressure Theory</b> is used to calculate the lateral earth pressure exerted by soil. The <b>Active Earth Pressure Coefficient</b> \(K_a\) is calculated as:
 
-    The <b>Active Earth Pressure Coefficient</b> \(K_a\) is defined by:
+    \[ K_a = \frac{1 - \sin(\phi)}{1 + \sin(\phi)} \]
 
-    \[
-    K_a = \frac{1 - \sin(\phi)}{1 + \sin(\phi)}
-    \]
+    where \(\phi\) is the internal friction angle of the soil.
 
-    where:
-    - \(\phi\): Internal friction angle of the soil in degrees.
+    This app calculates the total lateral earth pressure acting on a retaining structure due to a layered soil profile and explores <b>optimal layer arrangements</b> that minimize that total pressure.
 
-    The lateral pressure at depth \(z\) is computed as:
-
-    \[
-    \sigma_h = K_a \cdot \gamma' \cdot z
-    \]
-
-    - \(\gamma'\): Effective unit weight of soil (adjusted below groundwater table).
-    - \(\gamma_w = 9.81 \, \text{kN/m}^3\): Unit weight of water.
-
-    If groundwater is present, the effective unit weight is reduced below the water table by subtracting \(\gamma_w\).
+    If a <b>groundwater table</b> is present, the effective unit weight of soil is reduced by the unit weight of water \(\gamma_w = 9.81 \text{ kN/m}^3\) below the water table, affecting pressure distribution.
     </div>
     """, unsafe_allow_html=True)
 
