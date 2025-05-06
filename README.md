@@ -1,19 +1,16 @@
-# 🎈 Blank app template
+# Soil Layer Optimizer (Rankine Earth Pressure)
 
-A simple Streamlit app template for you to modify!
+[![Open in Streamlit](soil-layer-optimizer)](https://soil-layer-optimizer.streamlit.app/)
 
-[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://blank-app-template.streamlit.app/)
+This app optimizes the order of soil layers to minimize total lateral earth pressure using Rankine's theory. Built with Streamlit.
 
-### How to run it on your own machine
+## Features
 
-1. Install the requirements
+- Upload a CSV file of soil layers
+- Specify groundwater table depth (optional)
+- View total lateral earth pressure (before and after optimization)
+- Visualize pressure distribution with plots
 
-   ```
-   $ pip install -r requirements.txt
-   ```
+## CSV Format
 
-2. Run the app
-
-   ```
-   $ streamlit run streamlit_app.py
-   ```
+Your CSV should have the following columns:
