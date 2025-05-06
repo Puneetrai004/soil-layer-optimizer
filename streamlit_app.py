@@ -173,20 +173,35 @@ def optimize_layers(layers, gwt_depth):
 st.set_page_config(page_title="Soil Layer Optimizer", layout="wide")
 st.title("🧱 Soil Layer Optimizer")
 
-with st.expander("📘 Theory - Rankine Earth Pressure & Optimization"):
-    st.markdown("""
-    **Rankine's Earth Pressure Theory** is used to calculate the lateral earth pressure exerted by soil. The **Active Earth Pressure Coefficient** \(K_a\) is calculated as:
+with st.expander("📘 Theory - Rankine Earth Pressure", expanded=True):
+    st.markdown(r"""
+    <div style="background-color: #f8f9fa; padding: 1rem; border-radius: 0.5rem;">
+    <b>Rankine's Earth Pressure Theory</b> is used to estimate the lateral earth pressure exerted by a soil mass on a retaining wall or similar structure.
 
-    \[ K_a = \frac{1 - \sin(\phi)}{1 + \sin(\phi)} \]
+    The <b>Active Earth Pressure Coefficient</b> \(K_a\) is defined by:
 
-    where \(\phi\) is the internal friction angle of the soil.
+    \[
+    K_a = \frac{1 - \sin(\phi)}{1 + \sin(\phi)}
+    \]
 
-    This app calculates the total lateral earth pressure acting on a retaining structure due to a layered soil profile and explores **optimal layer arrangements** that minimize that total pressure.
+    where:
+    - \(\phi\): Internal friction angle of the soil in degrees.
 
-    If a **groundwater table** is present, effective unit weight is reduced by the unit weight of water (\(\gamma_w = 9.81 \ \text{kN/m}^3\)) below the water table.
-    """)
+    The lateral pressure at depth \(z\) is computed as:
+
+    \[
+    \sigma_h = K_a \cdot \gamma' \cdot z
+    \]
+
+    - \(\gamma'\): Effective unit weight of soil (adjusted below groundwater table).
+    - \(\gamma_w = 9.81 \, \text{kN/m}^3\): Unit weight of water.
+
+    If groundwater is present, the effective unit weight is reduced below the water table by subtracting \(\gamma_w\).
+    </div>
+    """, unsafe_allow_html=True)
 
 st.markdown("""
+### 📂 Input Instructions
 Upload a CSV file with the following columns:
 - `phi`: Internal friction angle (degrees)
 - `gamma`: Unit weight (kN/m³)
@@ -195,8 +210,11 @@ Upload a CSV file with the following columns:
 """)
 
 uploaded_file = st.file_uploader("📄 Upload CSV File", type="csv")
-gwt_depth_input = st.text_input("🌊 Groundwater Table Depth (m):", value="")
-gwt_depth = float(gwt_depth_input) if gwt_depth_input.strip() else None
+gwt_depth = st.slider("🌊 Groundwater Table Depth (m):", min_value=0.0, max_value=50.0, value=0.0, step=0.5)
+
+gwt_active = st.checkbox("Include Groundwater Table Adjustment", value=True)
+if not gwt_active:
+    gwt_depth = None
 
 if uploaded_file is not None:
     try:
@@ -231,14 +249,14 @@ if uploaded_file is not None:
             st.markdown(f"**🧠 Optimized Force:** `{optimized_force:.2f} kN/m`")
 
             # Plot
-            fig, axs = plt.subplots(1, 2, figsize=(12, 6))
+            fig, axs = plt.subplots(1, 2, figsize=(12, 6), sharey=True)
 
             for ax, set_layers, title in zip(axs, [layers, optimized_layers], ["Original", "Optimized"]):
                 pressures = calculate_pressure_profile(set_layers, gwt_depth)
                 depths = [p[0] for p in pressures]
                 sigmas = [p[1] for p in pressures]
 
-                ax.plot(sigmas, depths, marker='o', label=title)
+                ax.plot(sigmas, depths, marker='o', linestyle='-', color='darkgreen', label="Lateral Pressure")
                 ax.set_title(f"{title} Pressure Distribution")
                 ax.set_xlabel("Pressure (kPa)")
                 ax.set_ylabel("Depth (m)")
@@ -254,4 +272,3 @@ if uploaded_file is not None:
 
     except Exception as e:
         st.error(f"Error processing file: {e}")
-
